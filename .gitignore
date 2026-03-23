@@ -1,0 +1,35 @@
+# Telegram session files — contain auth tokens, never commit
+*.session
+*.session-journal
+
+# Local config with API credentials
+config.json
+
+# SQLite database with private message history
+messages.db
+*.db-shm
+*.db-wal
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Env files
+.env
+.env.*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Build artifacts
+*.egg-info/

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telegram-memory"
+version = "0.1.0"
+description = "Sync and search Telegram chat history locally — for humans and AI agents"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "telethon>=1.36",
+    "click>=8.1",
+    "aiosqlite>=0.20",   # async SQLite for sync command
+]
+
+[project.scripts]
+telegram-memory = "telegram_memory.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["telegram_memory*"]
