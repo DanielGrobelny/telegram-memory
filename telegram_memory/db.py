@@ -8,7 +8,8 @@ from pathlib import Path
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS messages (
-    id          INTEGER PRIMARY KEY,
+    message_pk  INTEGER PRIMARY KEY,
+    id          INTEGER NOT NULL,
     chat_id     INTEGER NOT NULL,
     chat_name   TEXT,
     sender_id   INTEGER,
@@ -17,7 +18,8 @@ CREATE TABLE IF NOT EXISTS messages (
     date        TEXT NOT NULL,   -- ISO 8601
     reply_to_id INTEGER,
     media_type  TEXT,            -- photo, video, voice, document, null
-    raw_json    TEXT             -- full message as JSON for future use
+    raw_json    TEXT,            -- full message as JSON for future use
+    UNIQUE(chat_id, id)
 );
 
 CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts USING fts5(
@@ -25,25 +27,25 @@ CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts USING fts5(
     sender_name,
     chat_name,
     content=messages,
-    content_rowid=id
+    content_rowid=message_pk
 );
 
 -- Keep FTS index in sync with the messages table via triggers.
 CREATE TRIGGER IF NOT EXISTS messages_ai AFTER INSERT ON messages BEGIN
     INSERT INTO messages_fts(rowid, message_text, sender_name, chat_name)
-    VALUES (new.id, new.message_text, new.sender_name, new.chat_name);
+    VALUES (new.message_pk, new.message_text, new.sender_name, new.chat_name);
 END;
 
 CREATE TRIGGER IF NOT EXISTS messages_ad AFTER DELETE ON messages BEGIN
     INSERT INTO messages_fts(messages_fts, rowid, message_text, sender_name, chat_name)
-    VALUES ('delete', old.id, old.message_text, old.sender_name, old.chat_name);
+    VALUES ('delete', old.message_pk, old.message_text, old.sender_name, old.chat_name);
 END;
 
 CREATE TRIGGER IF NOT EXISTS messages_au AFTER UPDATE ON messages BEGIN
     INSERT INTO messages_fts(messages_fts, rowid, message_text, sender_name, chat_name)
-    VALUES ('delete', old.id, old.message_text, old.sender_name, old.chat_name);
+    VALUES ('delete', old.message_pk, old.message_text, old.sender_name, old.chat_name);
     INSERT INTO messages_fts(rowid, message_text, sender_name, chat_name)
-    VALUES (new.id, new.message_text, new.sender_name, new.chat_name);
+    VALUES (new.message_pk, new.message_text, new.sender_name, new.chat_name);
 END;
 
 CREATE TABLE IF NOT EXISTS sync_state (
