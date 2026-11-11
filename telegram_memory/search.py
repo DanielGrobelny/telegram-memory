@@ -34,7 +34,7 @@ def _build_query(
             m.reply_to_id,
             m.media_type
         FROM messages_fts fts
-        JOIN messages m ON m.id = fts.rowid
+        JOIN messages m ON m.message_pk = fts.rowid
         WHERE messages_fts MATCH ?
     """
     params: list = [query]

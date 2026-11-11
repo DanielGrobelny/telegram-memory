@@ -106,7 +106,7 @@ All files stay on your machine. Nothing is sent anywhere.
 ## Database schema
 
 ```sql
-messages (id, chat_id, chat_name, sender_id, sender_name,
+messages (message_pk, id, chat_id, chat_name, sender_id, sender_name,
           message_text, date, reply_to_id, media_type, raw_json)
 
 messages_fts  -- FTS5 virtual table over message_text, sender_name, chat_name
